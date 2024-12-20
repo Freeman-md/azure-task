@@ -18,12 +18,20 @@ else
     connection = Environment.GetEnvironmentVariable("AzureSQL");
 }
 
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connection));
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connection, sqlServerOptionsAction: sqlOptions =>
+{
+    sqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(30),
+            errorNumbersToAdd: null
+        );
+}));
 
 var app = builder.Build();
 
 // Ensure database is created or migrated
-using (var scope = app.Services.CreateScope()) {
+using (var scope = app.Services.CreateScope())
+{
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     dbContext.Database.EnsureCreated();
     dbContext.Database.Migrate();
