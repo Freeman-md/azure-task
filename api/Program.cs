@@ -1,3 +1,5 @@
+using api.Contracts;
+using api.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,6 +28,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
             errorNumbersToAdd: null
         );
 }));
+
+builder.Services.AddSingleton<ITaskItemRepository, TaskItemRepository>();
 
 var app = builder.Build();
 
