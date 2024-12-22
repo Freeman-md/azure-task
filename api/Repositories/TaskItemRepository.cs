@@ -1,6 +1,7 @@
 using System;
 using api.Contracts;
 using api.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace api.Repositories;
@@ -32,14 +33,14 @@ public class TaskItemRepository : ITaskItemRepository
         throw new NotImplementedException();
     }
 
-    public Task<IReadOnlyList<TaskItem>> GetAll()
+    public async Task<IReadOnlyList<TaskItem>> GetAll()
     {
-        throw new NotImplementedException();
+        return await _dbContext.TaskItems.ToListAsync();
     }
 
-    public Task<TaskItem> GetOne(int id)
+    public async Task<TaskItem?> GetOne(int id)
     {
-        throw new NotImplementedException();
+        return await _dbContext.TaskItems.FindAsync(id);
     }
 
     public Task<TaskItem> Update(TaskItem taskItem, int id)

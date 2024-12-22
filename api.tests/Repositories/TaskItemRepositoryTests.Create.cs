@@ -27,6 +27,10 @@ public partial class TaskItemRepositoryTests
         );
 
         _repository = new TaskItemRepository(_logger.Object, _dbContext);
+        
+        // Clear the TaskItems DbSet to ensure a clean state before each test
+        _dbContext.TaskItems.RemoveRange(_dbContext.TaskItems);
+        _dbContext.SaveChanges();
     }
 
     [Fact]

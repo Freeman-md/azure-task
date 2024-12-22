@@ -15,7 +15,7 @@ public partial class TaskItemRepositoryTests
         #endregion
 
         #region Act
-            TaskItem retrievedTaskItem = await _repository.GetOne(createdTaskItem.Id);
+            TaskItem? retrievedTaskItem = await _repository.GetOne(createdTaskItem.Id);
         #endregion
 
         #region Assert
@@ -28,7 +28,7 @@ public partial class TaskItemRepositoryTests
     [Fact]
     public async Task GetOne_ShouldReturnNull_WhenIdIsInvalid() {
         #region Act
-            TaskItem retrievedTaskItem = await _repository.GetOne(-1);
+            TaskItem? retrievedTaskItem = await _repository.GetOne(-1);
         #endregion
 
         #region Assert
