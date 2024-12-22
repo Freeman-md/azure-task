@@ -29,7 +29,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
         );
 }));
 
-builder.Services.AddSingleton<ITaskItemRepository, TaskItemRepository>();
+builder.Services.AddScoped<ITaskItemRepository, TaskItemRepository>();
 
 var app = builder.Build();
 
@@ -38,7 +38,6 @@ using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     dbContext.Database.EnsureCreated();
-    dbContext.Database.Migrate();
 }
 
 if (app.Environment.IsDevelopment())

@@ -13,20 +13,18 @@ namespace api.tests.Repositories;
 
 public partial class TaskItemRepositoryTests
 {
-    private readonly Mock<ILogger<TaskItemRepository>> _logger;
     private readonly ApplicationDbContext _dbContext;
     private readonly ITaskItemRepository _repository;
 
     public TaskItemRepositoryTests()
     {
-        _logger = new Mock<ILogger<TaskItemRepository>>();
         _dbContext = new ApplicationDbContext(
             new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase("Test")
                 .Options
         );
 
-        _repository = new TaskItemRepository(_logger.Object, _dbContext);
+        _repository = new TaskItemRepository(_dbContext);
         
         // Clear the TaskItems DbSet to ensure a clean state before each test
         _dbContext.TaskItems.RemoveRange(_dbContext.TaskItems);

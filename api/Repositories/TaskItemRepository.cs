@@ -8,11 +8,9 @@ namespace api.Repositories;
 
 public class TaskItemRepository : ITaskItemRepository
 {
-    private readonly ILogger<TaskItemRepository> _logger;
     private readonly ApplicationDbContext _dbContext;
 
-    public TaskItemRepository(ILogger<TaskItemRepository> logger, ApplicationDbContext dbContext) {
-        _logger = logger;
+    public TaskItemRepository(ApplicationDbContext dbContext) {
         _dbContext = dbContext;
     }
 
@@ -22,8 +20,6 @@ public class TaskItemRepository : ITaskItemRepository
 
         EntityEntry<TaskItem> createdTaskItem = await _dbContext.TaskItems.AddAsync(taskItem);
         await _dbContext.SaveChangesAsync();
-
-        _logger.LogInformation($"TaskItem created: {createdTaskItem.Entity.Id}");
 
         return createdTaskItem.Entity;
     }
@@ -36,8 +32,6 @@ public class TaskItemRepository : ITaskItemRepository
 
         _dbContext.TaskItems.Remove(itemToDelete);
         await _dbContext.SaveChangesAsync();
-
-        _logger.LogInformation($"TaskItem deleted: {id}");
     }
 
     public async Task<IReadOnlyList<TaskItem>> GetAll()
