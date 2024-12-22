@@ -28,9 +28,16 @@ public class TaskItemRepository : ITaskItemRepository
         return createdTaskItem.Entity;
     }
 
-    public Task Delete(int id)
+    public async Task Delete(int id)
     {
-        throw new NotImplementedException();
+        TaskItem? itemToDelete = await GetOne(id);
+
+        if (itemToDelete == null) throw new KeyNotFoundException($"TaskItem with ID {id} not found.");
+
+        _dbContext.TaskItems.Remove(itemToDelete);
+        await _dbContext.SaveChangesAsync();
+
+        _logger.LogInformation($"TaskItem deleted: {id}");
     }
 
     public async Task<IReadOnlyList<TaskItem>> GetAll()
