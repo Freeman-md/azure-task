@@ -50,8 +50,18 @@ public class TaskItemRepository : ITaskItemRepository
         return await _dbContext.TaskItems.FindAsync(id);
     }
 
-    public Task<TaskItem> Update(TaskItem taskItem, int id)
+    public async Task<TaskItem> Update(TaskItem taskItem, int id)
     {
-        throw new NotImplementedException();
+        TaskItem? itemToUpdate = await GetOne(id);
+        if (itemToUpdate == null) throw new KeyNotFoundException($"TaskItem with ID {id} not found.");
+
+        itemToUpdate.Title = taskItem.Title;
+        itemToUpdate.Description = taskItem.Description;
+        itemToUpdate.DueDate = taskItem.DueDate;
+        itemToUpdate.Status = taskItem.Status;
+        itemToUpdate.Images = taskItem.Images;
+        await _dbContext.SaveChangesAsync();
+
+        return itemToUpdate;
     }
 }
