@@ -15,18 +15,16 @@ public partial class TaskItemRepositoryTests
 {
     private readonly Mock<ILogger<TaskItemRepository>> _logger;
     private readonly ApplicationDbContext _dbContext;
-
     private readonly ITaskItemRepository _repository;
 
     public TaskItemRepositoryTests()
     {
         _logger = new Mock<ILogger<TaskItemRepository>>();
-
-        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-    .UseInMemoryDatabase("TestDb")
-    .Options;
-
-        _dbContext = new ApplicationDbContext(options);
+        _dbContext = new ApplicationDbContext(
+            new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase("Test")
+                .Options
+        );
 
         _repository = new TaskItemRepository(_logger.Object, _dbContext);
     }
@@ -39,12 +37,21 @@ public partial class TaskItemRepositoryTests
         #endregion
 
         #region Act
-        TaskItem createdTaskItem = await _repository.Create(taskItem);
+        var createdTaskItem = await _repository.Create(taskItem);
         #endregion
 
         #region Assert
         Assert.NotNull(createdTaskItem);
         Assert.Equal(taskItem.Title, createdTaskItem.Title);
+        #endregion
+    }
+
+
+    [Fact]
+    public async Task Create_ShouldThrowException_WhenTaskItemIsNull()
+    {
+        #region Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(async () => await _repository.Create(null!));
         #endregion
     }
 }

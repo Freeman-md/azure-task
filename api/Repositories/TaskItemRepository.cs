@@ -1,6 +1,7 @@
 using System;
 using api.Contracts;
 using api.Models;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace api.Repositories;
 
@@ -14,7 +15,7 @@ public class TaskItemRepository : ITaskItemRepository
         _dbContext = dbContext;
     }
 
-    public Task<TaskItem> Create(TaskItem taskItem)
+    public async Task<TaskItem> Create(TaskItem taskItem)
     {
         throw new NotImplementedException();
     }
