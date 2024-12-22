@@ -23,7 +23,9 @@ namespace api.Controllers
         [HttpGet("")]
         public async Task<ActionResult<IReadOnlyList<TaskItem>>> Index()
         {
-            throw new NotImplementedException();
+            IReadOnlyList<TaskItem> taskItems = await _repository.GetAll();
+
+            return Ok(taskItems);
         }
     }
 }
