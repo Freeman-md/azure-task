@@ -1,4 +1,5 @@
 using api.Contracts;
+using api.Middlewares;
 using api.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -45,6 +46,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.MapControllers();
 
