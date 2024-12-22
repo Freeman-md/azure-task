@@ -17,7 +17,14 @@ public class TaskItemRepository : ITaskItemRepository
 
     public async Task<TaskItem> Create(TaskItem taskItem)
     {
-        throw new NotImplementedException();
+        if (taskItem == null) throw new ArgumentNullException(nameof(taskItem));
+
+        EntityEntry<TaskItem> createdTaskItem = await _dbContext.TaskItems.AddAsync(taskItem);
+        await _dbContext.SaveChangesAsync();
+
+        _logger.LogInformation($"TaskItem created: {createdTaskItem.Entity.Id}");
+
+        return createdTaskItem.Entity;
     }
 
     public Task Delete(int id)
