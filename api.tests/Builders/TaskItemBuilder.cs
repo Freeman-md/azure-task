@@ -33,6 +33,12 @@ public class TaskItemBuilder
         return this;
     }
 
+    public TaskItemBuilder WithStatus(TaskItemStatus status)
+    {
+        _taskItem.Status = status;
+        return this;
+    }
+
     public TaskItem Build()
     {
         return _taskItem;
