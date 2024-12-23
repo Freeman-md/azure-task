@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using api.Contracts;
 using api.Middlewares;
 using api.Repositories;
@@ -31,6 +33,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
 }));
 
 builder.Services.AddScoped<ITaskItemRepository, TaskItemRepository>();
+
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, allowIntegerValues: false));
+    });
+
 
 var app = builder.Build();
 

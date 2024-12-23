@@ -168,9 +168,9 @@ public class TaskItemControllerTests
     {
         #region Arrange
         TaskItem taskItem = new TaskItemBuilder().WithId(1).Build();
-        TaskItem updatedTaskItem = new TaskItemBuilder().WithStatus(TaskItemStatus.Done).Build();
+        TaskItem updatedTaskItem = new TaskItemBuilder().WithStatus(TaskItemStatus.Completed).Build();
 
-        var updateDTO = new TaskItemUpdateDTO { Status = TaskItemStatus.Done };
+        var updateDTO = new TaskItemUpdateDTO { Status = TaskItemStatus.Completed };
 
         _repository.Setup(r => r.Update(taskItem.Id, It.IsAny<Dictionary<string, object>>()))
             .ReturnsAsync(updatedTaskItem);
@@ -185,7 +185,7 @@ public class TaskItemControllerTests
         TaskItemDTO retrievedTaskItemDTO = Assert.IsAssignableFrom<TaskItemDTO>(okResult.Value);
 
         Assert.Equal(updatedTaskItem.Id, retrievedTaskItemDTO.Id);
-        Assert.Equal(TaskItemStatus.Done.ToString(), retrievedTaskItemDTO.Status);
+        Assert.Equal(TaskItemStatus.Completed.ToString(), retrievedTaskItemDTO.Status);
         #endregion
     }
 

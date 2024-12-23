@@ -6,7 +6,7 @@ namespace api.Models;
 public enum TaskItemStatus {
     Pending,
     InProgress,
-    Done
+    Completed
 }
 
 public class TaskItem {
