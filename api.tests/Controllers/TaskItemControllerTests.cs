@@ -24,116 +24,141 @@ public class TaskItemControllerTests
     }
 
     [Fact]
-    public async Task Index_ReturnsOkResult_WithTaskItems() {
+    public async Task Index_ReturnsOkResult_WithTaskItems()
+    {
         #region Arrange
-            IReadOnlyList<TaskItem> taskItems = TaskItemBuilder.BuildMany(3);
+        IReadOnlyList<TaskItem> taskItems = TaskItemBuilder.BuildMany(3);
 
-            _repository.Setup(r => r.GetAll()).ReturnsAsync(taskItems);
+        _repository.Setup(r => r.GetAll()).ReturnsAsync(taskItems);
         #endregion
 
         #region Act
-            ActionResult<IReadOnlyList<TaskItem>> result = await _controller.Index();
+        ActionResult<IReadOnlyList<TaskItem>> result = await _controller.Index();
         #endregion
 
         #region Assert
-            OkObjectResult okResult = Assert.IsType<OkObjectResult>(result.Result);
-            IReadOnlyList<TaskItem> retrievedTaskItems = Assert.IsAssignableFrom<IReadOnlyList<TaskItem>>(okResult.Value);
+        OkObjectResult okResult = Assert.IsType<OkObjectResult>(result.Result);
+        IReadOnlyList<TaskItem> retrievedTaskItems = Assert.IsAssignableFrom<IReadOnlyList<TaskItem>>(okResult.Value);
 
-            Assert.Equal(taskItems.Count, retrievedTaskItems.Count);
+        Assert.Equal(taskItems.Count, retrievedTaskItems.Count);
         #endregion
     }
 
     [Fact]
-    public async Task Index_ReturnsOkResult_WithEmptyList() {
+    public async Task Index_ReturnsOkResult_WithEmptyList()
+    {
         #region Arrange
-            List<TaskItem> taskItems = new List<TaskItem>();
+        List<TaskItem> taskItems = new List<TaskItem>();
 
-            _repository.Setup(r => r.GetAll()).ReturnsAsync(taskItems);
+        _repository.Setup(r => r.GetAll()).ReturnsAsync(taskItems);
         #endregion
 
         #region Act
-            ActionResult<IReadOnlyList<TaskItem>> result = await _controller.Index();
+        ActionResult<IReadOnlyList<TaskItem>> result = await _controller.Index();
         #endregion
 
         #region Assert
-            OkObjectResult okResult = Assert.IsType<OkObjectResult>(result.Result);
-            IReadOnlyList<TaskItem> retrievedTaskItems = Assert.IsAssignableFrom<IReadOnlyList<TaskItem>>(okResult.Value);
+        OkObjectResult okResult = Assert.IsType<OkObjectResult>(result.Result);
+        IReadOnlyList<TaskItem> retrievedTaskItems = Assert.IsAssignableFrom<IReadOnlyList<TaskItem>>(okResult.Value);
 
-            Assert.Equal(taskItems.Count, retrievedTaskItems.Count);
+        Assert.Equal(taskItems.Count, retrievedTaskItems.Count);
         #endregion
     }
 
     [Fact]
-    public async Task Show_ReturnsOkResult_WithValidId() {
+    public async Task Show_ReturnsOkResult_WithValidId()
+    {
         #region Arrange
-            TaskItem taskItem = new TaskItemBuilder().WithId(1).Build();
-            
-            _repository.Setup(r => r.GetOne(taskItem.Id)).ReturnsAsync(taskItem);
+        TaskItem taskItem = new TaskItemBuilder().WithId(1).Build();
+
+        _repository.Setup(r => r.GetOne(taskItem.Id)).ReturnsAsync(taskItem);
         #endregion
 
         #region Act
-            ActionResult<TaskItem> result = await _controller.Show(taskItem.Id);
+        ActionResult<TaskItem> result = await _controller.Show(taskItem.Id);
         #endregion
 
         #region Assert
-            OkObjectResult okResult = Assert.IsType<OkObjectResult>(result.Result);
-            TaskItem retrievedTaskItem = Assert.IsAssignableFrom<TaskItem>(okResult.Value);
+        OkObjectResult okResult = Assert.IsType<OkObjectResult>(result.Result);
+        TaskItem retrievedTaskItem = Assert.IsAssignableFrom<TaskItem>(okResult.Value);
 
-            Assert.Equal(taskItem.Id, retrievedTaskItem.Id);
-            Assert.Equal(taskItem.Title, retrievedTaskItem.Title);
+        Assert.Equal(taskItem.Id, retrievedTaskItem.Id);
+        Assert.Equal(taskItem.Title, retrievedTaskItem.Title);
         #endregion
     }
 
     [Fact]
-    public async Task Show_ReturnsNotFoundResult_WithInvalidId() {
+    public async Task Show_ReturnsNotFoundResult_WithInvalidId()
+    {
         #region Arrange
-            TaskItem taskItem = new TaskItemBuilder().WithId(1).Build();
-            
-            _repository.Setup(r => r.GetOne(taskItem.Id)).ReturnsAsync((TaskItem)null!);
+        TaskItem taskItem = new TaskItemBuilder().WithId(1).Build();
+
+        _repository.Setup(r => r.GetOne(taskItem.Id)).ReturnsAsync((TaskItem)null!);
         #endregion
 
         #region Act
-            ActionResult<TaskItem> result = await _controller.Show(taskItem.Id);
+        ActionResult<TaskItem> result = await _controller.Show(taskItem.Id);
         #endregion
 
         #region Assert
-            NotFoundResult notFoundResult = Assert.IsType<NotFoundResult>(result.Result);
+        NotFoundResult notFoundResult = Assert.IsType<NotFoundResult>(result.Result);
         #endregion
     }
 
     [Fact]
-    public async Task Store_SavesTaskItem_ReturnsCreatedTaskItem() {
+    public async Task Store_SavesTaskItem_ReturnsCreatedTaskItem()
+    {
         #region Arrange
-            TaskItem taskItem = new TaskItemBuilder().Build();
-            
-            _repository.Setup(r => r.Create(taskItem)).ReturnsAsync(taskItem);
+        TaskItem taskItem = new TaskItemBuilder().Build();
+
+        _repository.Setup(r => r.Create(taskItem)).ReturnsAsync(taskItem);
         #endregion
 
         #region Name
-            ActionResult<TaskItem> result = await _controller.Create(taskItem);
+        ActionResult<TaskItem> result = await _controller.Create(taskItem);
         #endregion
 
         #region Assert
-            CreatedAtActionResult createdResult = Assert.IsType<CreatedAtActionResult>(result.Result);
-            TaskItem createdTaskItem = Assert.IsAssignableFrom<TaskItem>(createdResult.Value);
+        CreatedAtActionResult createdResult = Assert.IsType<CreatedAtActionResult>(result.Result);
+        TaskItem createdTaskItem = Assert.IsAssignableFrom<TaskItem>(createdResult.Value);
 
-            Assert.Equal(taskItem.Id, createdTaskItem.Id);
-            Assert.Equal(taskItem.Title, createdTaskItem.Title);
+        Assert.Equal(taskItem.Id, createdTaskItem.Id);
+        Assert.Equal(taskItem.Title, createdTaskItem.Title);
         #endregion
     }
 
-    [Fact]
-    public async Task Store_ReturnsBadRequest_WithInvalidTaskItem() {
+    [Theory]
+    [InlineData(null, "Description is valid", TaskItemStatus.Pending)]
+    [InlineData("", "Description is valid", TaskItemStatus.Pending)]
+    [InlineData("Valid Title", "Valid Description", (TaskItemStatus)99)]
+    [InlineData("Title that exceeds the maximum allowed length of 100 characters which is way too long for a valid task", "Valid Description", TaskItemStatus.Pending)]
+    public async Task Store_ReturnsBadRequest_WithInvalidTaskItem(string? title, string? description, TaskItemStatus status)
+    {
         #region Arrange
-            TaskItem taskItem = new TaskItemBuilder().WithId(0).Build();
+        TaskItem taskItem = new TaskItemBuilder()
+            .WithTitle(title)
+            .WithDescription(description)
+            .WithStatus(status)
+            .Build();
+
+        if (title == null || title == "" || title.Length > 100)
+            _controller.ModelState.AddModelError("Title", "The Title field is required and must not exceed 100 characters.");
+        if (!Enum.IsDefined(typeof(TaskItemStatus), status))
+            _controller.ModelState.AddModelError("Status", "The Status field contains an invalid value.");
+
+        _repository.Setup(r => r.Create(It.IsAny<TaskItem>())).Throws(new Exception("This should not be called"));
         #endregion
 
         #region Act
-            ActionResult<TaskItem> result = await _controller.Create(taskItem);
+        ActionResult<TaskItem> result = await _controller.Create(taskItem);
         #endregion
 
         #region Assert
-            BadRequestResult badRequestResult = Assert.IsType<BadRequestResult>(result.Result);
+        BadRequestObjectResult badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+        Assert.NotNull(badRequestResult.Value);
+
+        Assert.True(_controller.ModelState.ErrorCount > 0);
         #endregion
     }
+
 }

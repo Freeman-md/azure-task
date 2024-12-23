@@ -51,7 +51,15 @@ namespace api.Controllers
         [HttpPost("")]
         public async Task<ActionResult<TaskItem>> Create([FromBody] TaskItem taskItem)
         {
-            throw new NotImplementedException();
+            if (!ModelState.IsValid) {
+                _logger.LogWarning("Invalid task item model.");
+                return BadRequest(ModelState);
+            }
+
+            TaskItem createdTaskItem = await _repository.Create(taskItem);
+
+            _logger.LogInformation("Created task item with ID {Id}.", createdTaskItem.Id);
+            return CreatedAtAction(nameof(Show), new { id = createdTaskItem.Id }, createdTaskItem);
         }
     }
 }
