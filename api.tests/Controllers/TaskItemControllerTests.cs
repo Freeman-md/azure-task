@@ -169,18 +169,11 @@ public class TaskItemControllerTests
         TaskItem taskItem = new TaskItemBuilder().WithId(1).Build();
         TaskItem updatedTaskItem = new TaskItemBuilder().WithTitle("Updated Title").Build();
 
-        var updatedTaskItemDict = new Dictionary<string, object>
-        {
-            { "Title", updatedTaskItem.Title },
-            { "Description", updatedTaskItem.Description },
-            { "Status", updatedTaskItem.Status }
-        };
-
-        _repository.Setup(r => r.Update(taskItem.Id, updatedTaskItemDict)).ReturnsAsync(updatedTaskItem);
+        _repository.Setup(r => r.Update(taskItem.Id, It.IsAny<Dictionary<string, object>>())).ReturnsAsync(updatedTaskItem);
         #endregion
 
         #region Act
-        ActionResult<TaskItem> result = await _controller.Update(taskItem.Id, updatedTaskItemDict);
+        ActionResult<TaskItem> result = await _controller.Update(taskItem.Id, updatedTaskItem);
         #endregion
 
         #region Assert
@@ -214,11 +207,16 @@ public class TaskItemControllerTests
             { "Status", updatedTaskItem.Status }
         };
 
+        if (title == null || title == "" || title.Length > 100)
+            _controller.ModelState.AddModelError("Title", "The Title field is required and must not exceed 100 characters.");
+        if (!Enum.IsDefined(typeof(TaskItemStatus), status))
+            _controller.ModelState.AddModelError("Status", "The Status field contains an invalid value.");
+
         _repository.Setup(r => r.Update(taskItem.Id, updatedTaskItemDict)).ThrowsAsync(new Exception("This should not be called"));
         #endregion
 
         #region Act
-        ActionResult<TaskItem> result = await _controller.Update(taskItem.Id, updatedTaskItemDict);
+        ActionResult<TaskItem> result = await _controller.Update(taskItem.Id, updatedTaskItem);
         #endregion
 
         #region Assert
@@ -234,19 +232,13 @@ public class TaskItemControllerTests
     {
         #region Arrange
         TaskItem taskItem = new TaskItemBuilder().WithId(1).Build();
+        TaskItem updatedTaskItem = new TaskItemBuilder().WithId(1).WithTitle("Updated Title").Build();
 
-        var updatedTaskItemDict = new Dictionary<string, object>
-            {
-                { "Title", "Updated Title" },
-                { "Description", "Updated Description" },
-                { "Status", TaskItemStatus.Done }
-            };
-
-        _repository.Setup(repo => repo.Update(It.IsAny<int>(), updatedTaskItemDict)).ThrowsAsync(new KeyNotFoundException());
+        _repository.Setup(repo => repo.Update(It.IsAny<int>(), It.IsAny<Dictionary<string, object>>())).ThrowsAsync(new KeyNotFoundException());
         #endregion
 
         #region Act
-        ActionResult<TaskItem> result = await _controller.Update(-1, updatedTaskItemDict);
+        ActionResult<TaskItem> result = await _controller.Update(-1, updatedTaskItem);
         #endregion
 
         #region Assert

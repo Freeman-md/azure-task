@@ -64,11 +64,25 @@ namespace api.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<ActionResult<TaskItem>> Update(int id, Dictionary<string, object> updates)
+        public async Task<ActionResult<TaskItem>> Update(int id, [FromBody] TaskItem taskItem)
         {
             try
             {
-                TaskItem updatedTaskItem = await _repository.Update(id, updates);
+                if (!ModelState.IsValid)
+                {
+                    _logger.LogWarning("Invalid update model for task item with ID {Id}.", id);
+                    return BadRequest(ModelState);
+                }
+
+                var updatesDict = new Dictionary<string, object>
+                {
+                    { "Title", taskItem.Title },
+                    { "Description", taskItem.Description },
+                    { "Status", taskItem.Status },
+                    { "DueDate", taskItem.DueDate }
+                };
+
+                TaskItem updatedTaskItem = await _repository.Update(id, updatesDict);
 
                 _logger.LogInformation("Updated task item with ID {Id}.", id);
                 return Ok(updatedTaskItem);

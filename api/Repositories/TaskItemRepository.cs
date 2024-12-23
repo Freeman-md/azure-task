@@ -10,7 +10,8 @@ public class TaskItemRepository : ITaskItemRepository
 {
     private readonly ApplicationDbContext _dbContext;
 
-    public TaskItemRepository(ApplicationDbContext dbContext) {
+    public TaskItemRepository(ApplicationDbContext dbContext)
+    {
         _dbContext = dbContext;
     }
 
@@ -45,20 +46,20 @@ public class TaskItemRepository : ITaskItemRepository
     }
 
     public async Task<TaskItem> Update(int id, Dictionary<string, object> updates)
-{
-    TaskItem? itemToUpdate = await GetOne(id);
-    if (itemToUpdate == null) throw new KeyNotFoundException($"TaskItem with ID {id} not found.");
-
-    foreach (var update in updates)
     {
-        var propertyInfo = typeof(TaskItem).GetProperty(update.Key);
-        if (propertyInfo != null && propertyInfo.CanWrite)
-        {
-            propertyInfo.SetValue(itemToUpdate, update.Value);
-        }
-    }
+        TaskItem? itemToUpdate = await GetOne(id);
+        if (itemToUpdate == null) throw new KeyNotFoundException($"TaskItem with ID {id} not found.");
 
-    await _dbContext.SaveChangesAsync();
-    return itemToUpdate;
-}
+        foreach (var update in updates)
+        {
+            var propertyInfo = typeof(TaskItem).GetProperty(update.Key);
+            if (propertyInfo != null && propertyInfo.CanWrite)
+            {
+                propertyInfo.SetValue(itemToUpdate, update.Value);
+            }
+        }
+
+        await _dbContext.SaveChangesAsync();
+        return itemToUpdate;
+    }
 }
