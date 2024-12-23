@@ -63,6 +63,7 @@ namespace api.Controllers
             return CreatedAtAction(nameof(Show), new { id = createdTaskItem.Id }, createdTaskItem);
         }
 
+        [HttpPatch("{id}")]
         public async Task<ActionResult<TaskItem>> Update(int id, Dictionary<string, object> updates)
         {
             try

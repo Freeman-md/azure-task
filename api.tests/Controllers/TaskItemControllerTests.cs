@@ -163,7 +163,8 @@ public class TaskItemControllerTests
     }
 
     [Fact]
-    public async Task Update_ReturnsOkResult_WithValidTaskItem() {
+    public async Task Update_ReturnsOkResult_WithValidTaskItem()
+    {
         #region Arrange
         TaskItem taskItem = new TaskItemBuilder().WithId(1).Build();
         TaskItem updatedTaskItem = new TaskItemBuilder().WithTitle("Updated Title").Build();
@@ -191,27 +192,65 @@ public class TaskItemControllerTests
         #endregion
     }
 
-    [Fact]
-    public async Task Update_ReturnsNotFound_WithInvalidId() {
+    [Theory]
+    [InlineData(null, "Description is valid", TaskItemStatus.Pending)]
+    [InlineData("", "Description is valid", TaskItemStatus.Pending)]
+    [InlineData("Valid Title", "Valid Description", (TaskItemStatus)99)]
+    [InlineData("Title that exceeds the maximum allowed length of 100 characters which is way too long for a valid task", "Valid Description", TaskItemStatus.Pending)]
+    public async Task Update_ReturnsBadRequest_WithInValidTaskItem(string? title, string? description, TaskItemStatus status)
+    {
         #region Arrange
-            TaskItem taskItem = new TaskItemBuilder().WithId(1).Build();
+        TaskItem taskItem = new TaskItemBuilder().WithId(1).Build();
+        TaskItem updatedTaskItem = new TaskItemBuilder()
+                                        .WithTitle(title)
+                                        .WithDescription(description)
+                                        .WithStatus(status)
+                                        .Build();
 
-            var updatedTaskItemDict = new Dictionary<string, object>
+        var updatedTaskItemDict = new Dictionary<string, object>
+        {
+            { "Title", updatedTaskItem.Title },
+            { "Description", updatedTaskItem.Description },
+            { "Status", updatedTaskItem.Status }
+        };
+
+        _repository.Setup(r => r.Update(taskItem.Id, updatedTaskItemDict)).ThrowsAsync(new Exception("This should not be called"));
+        #endregion
+
+        #region Act
+        ActionResult<TaskItem> result = await _controller.Update(taskItem.Id, updatedTaskItemDict);
+        #endregion
+
+        #region Assert
+        BadRequestObjectResult badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+        Assert.NotNull(badRequestObjectResult.Value);
+
+        Assert.True(_controller.ModelState.ErrorCount > 0);
+        #endregion
+    }
+
+    [Fact]
+    public async Task Update_ReturnsNotFound_WithInvalidId()
+    {
+        #region Arrange
+        TaskItem taskItem = new TaskItemBuilder().WithId(1).Build();
+
+        var updatedTaskItemDict = new Dictionary<string, object>
             {
                 { "Title", "Updated Title" },
                 { "Description", "Updated Description" },
                 { "Status", TaskItemStatus.Done }
             };
 
-            _repository.Setup(repo => repo.Update(It.IsAny<int>(), updatedTaskItemDict)).ThrowsAsync(new KeyNotFoundException());
+        _repository.Setup(repo => repo.Update(It.IsAny<int>(), updatedTaskItemDict)).ThrowsAsync(new KeyNotFoundException());
         #endregion
 
         #region Act
-            ActionResult<TaskItem> result = await _controller.Update(-1, updatedTaskItemDict);
+        ActionResult<TaskItem> result = await _controller.Update(-1, updatedTaskItemDict);
         #endregion
 
         #region Assert
-            Assert.IsType<NotFoundResult>(result.Result);
+        Assert.IsType<NotFoundResult>(result.Result);
         #endregion
     }
 
