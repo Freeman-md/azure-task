@@ -23,7 +23,7 @@ namespace api.Controllers
         /// Retrieves all task items.
         /// </summary>
         [HttpGet("")]
-        public async Task<ActionResult<IReadOnlyList<TaskItem>>> Index()
+        public async Task<ActionResult<IReadOnlyList<TaskItemDTO>>> Index()
         {
             IReadOnlyList<TaskItem> taskItems = await _repository.GetAll();
 
@@ -38,7 +38,7 @@ namespace api.Controllers
         /// Retrieves a specific task item by ID.
         /// </summary>
         [HttpGet("{id}")]
-        public async Task<ActionResult<TaskItem>> Show(int id)
+        public async Task<ActionResult<TaskItemDTO>> Show(int id)
         {
             TaskItem? taskItem = await _repository.GetOne(id);
             if (taskItem == null)
@@ -54,7 +54,7 @@ namespace api.Controllers
         }
 
         [HttpPost("")]
-        public async Task<ActionResult<TaskItem>> Create([FromBody] TaskItem taskItem)
+        public async Task<ActionResult<TaskItemDTO>> Create([FromBody] TaskItem taskItem)
         {
             if (!ModelState.IsValid)
             {
@@ -65,11 +65,11 @@ namespace api.Controllers
             TaskItem createdTaskItem = await _repository.Create(taskItem);
 
             _logger.LogInformation("Created task item with ID {Id}.", createdTaskItem.Id);
-            return CreatedAtAction(nameof(Show), new { id = createdTaskItem.Id }, createdTaskItem);
+            return CreatedAtAction(nameof(Show), new { id = createdTaskItem.Id }, TaskItemDTO.FromEntity(createdTaskItem));
         }
 
         [HttpPatch("{id}")]
-        public async Task<ActionResult<TaskItem>> Update(int id, [FromBody] TaskItem taskItem)
+        public async Task<ActionResult<TaskItemDTO>> Update(int id, [FromBody] TaskItemUpdateDTO taskItemUpdate)
         {
             try
             {
@@ -79,18 +79,29 @@ namespace api.Controllers
                     return BadRequest(ModelState);
                 }
 
-                var updatesDict = new Dictionary<string, object>
+                var updatesDict = new Dictionary<string, object>();
+                if (!string.IsNullOrWhiteSpace(taskItemUpdate.Title))
+                    updatesDict.Add(nameof(TaskItem.Title), taskItemUpdate.Title);
+
+                if (!string.IsNullOrWhiteSpace(taskItemUpdate.Description))
+                    updatesDict.Add(nameof(TaskItem.Description), taskItemUpdate.Description);
+
+                if (taskItemUpdate.Status.HasValue)
+                    updatesDict.Add(nameof(TaskItem.Status), taskItemUpdate.Status.Value);
+
+                if (taskItemUpdate.DueDate.HasValue)
+                    updatesDict.Add(nameof(TaskItem.DueDate), taskItemUpdate.DueDate.Value);
+
+                if (updatesDict.Count == 0)
                 {
-                    { "Title", taskItem.Title },
-                    { "Description", taskItem.Description ?? string.Empty },
-                    { "Status", taskItem.Status },
-                    { "DueDate", taskItem.DueDate }
-                };
+                    _logger.LogWarning("No valid fields provided for update.");
+                    return BadRequest("No fields to update were provided.");
+                }
 
                 TaskItem updatedTaskItem = await _repository.Update(id, updatesDict);
 
                 _logger.LogInformation("Updated task item with ID {Id}.", id);
-                return Ok(updatedTaskItem);
+                return Ok(TaskItemDTO.FromEntity(updatedTaskItem));
             }
             catch (KeyNotFoundException ex)
             {
@@ -110,7 +121,7 @@ namespace api.Controllers
                 return NoContent();
             }
             catch (KeyNotFoundException ex)
-            {   
+            {
                 _logger.LogWarning(ex.Message);
                 return NotFound(ex.Message);
             }
