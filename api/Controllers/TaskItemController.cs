@@ -77,7 +77,7 @@ namespace api.Controllers
                 var updatesDict = new Dictionary<string, object>
                 {
                     { "Title", taskItem.Title },
-                    { "Description", taskItem.Description },
+                    { "Description", taskItem.Description ?? string.Empty },
                     { "Status", taskItem.Status },
                     { "DueDate", taskItem.DueDate }
                 };

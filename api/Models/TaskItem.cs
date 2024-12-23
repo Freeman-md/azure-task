@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace api.Models;
@@ -20,7 +21,7 @@ public class TaskItem {
     public string? Description { get; set; }
 
     [DataType(DataType.Date, ErrorMessage = "Please enter a valid date in the format YYYY-MM-DD.")]
-    public DateTime DueDate { get; set; }
+    public DateTime DueDate { get; set; } = DateTime.Now;
 
 
     [EnumDataType(typeof(TaskItemStatus), ErrorMessage = "Invalid status value.")]
