@@ -202,6 +202,8 @@ public class TaskItemControllerTests
                 { "Description", "Updated Description" },
                 { "Status", TaskItemStatus.Done }
             };
+
+            _repository.Setup(repo => repo.Update(It.IsAny<int>(), updatedTaskItemDict)).ThrowsAsync(new KeyNotFoundException());
         #endregion
 
         #region Act

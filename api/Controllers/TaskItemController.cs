@@ -51,7 +51,8 @@ namespace api.Controllers
         [HttpPost("")]
         public async Task<ActionResult<TaskItem>> Create([FromBody] TaskItem taskItem)
         {
-            if (!ModelState.IsValid) {
+            if (!ModelState.IsValid)
+            {
                 _logger.LogWarning("Invalid task item model.");
                 return BadRequest(ModelState);
             }
@@ -64,7 +65,18 @@ namespace api.Controllers
 
         public async Task<ActionResult<TaskItem>> Update(int id, Dictionary<string, object> updates)
         {
-            throw new NotImplementedException();
+            try
+            {
+                TaskItem updatedTaskItem = await _repository.Update(id, updates);
+
+                _logger.LogInformation("Updated task item with ID {Id}.", id);
+                return Ok(updatedTaskItem);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex.Message);
+                return NotFound();
+            }
         }
     }
 }
