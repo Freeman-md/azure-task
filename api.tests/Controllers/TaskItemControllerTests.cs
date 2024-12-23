@@ -249,7 +249,7 @@ public class TaskItemControllerTests
     [Fact]
     public async Task Destroy_ReturnsOkResult_WithValidId() {
         #region Arrange
-        TaskItem taskItem = new TaskItemBuilder().Build();
+        TaskItem taskItem = new TaskItemBuilder().WithId(1).Build();
 
         _repository.Setup(r => r.GetOne(taskItem.Id)).ReturnsAsync(taskItem);
         #endregion
@@ -259,7 +259,7 @@ public class TaskItemControllerTests
         #endregion
 
         #region Assert
-        OkObjectResult okResult = Assert.IsType<OkObjectResult>(result.Result);
+        Assert.IsType<NoContentResult>(result.Result);
         #endregion
     }
 
@@ -268,7 +268,7 @@ public class TaskItemControllerTests
         #region Arrange
         TaskItem taskItem = new TaskItemBuilder().Build();
 
-        _repository.Setup(r => r.GetOne(taskItem.Id)).ReturnsAsync((TaskItem)null!);
+        _repository.Setup(r => r.Delete(taskItem.Id)).ThrowsAsync(new KeyNotFoundException());
         #endregion
 
         #region Act
@@ -276,7 +276,7 @@ public class TaskItemControllerTests
         #endregion
 
         #region Assert
-        NotFoundResult notFoundResult = Assert.IsType<NotFoundResult>(result.Result);
+        Assert.IsType<NotFoundObjectResult>(result.Result);
         #endregion
     }
 

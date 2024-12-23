@@ -94,9 +94,21 @@ namespace api.Controllers
             }
         }
 
-        public async Task<ActionResult<TaskItem>> Destroy(int id)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Destroy(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                await _repository.Delete(id);
+
+                _logger.LogInformation("Deleted task item with ID {Id}.", id);
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {   
+                _logger.LogWarning(ex.Message);
+                return NotFound(ex.Message);
+            }
         }
     }
 }
