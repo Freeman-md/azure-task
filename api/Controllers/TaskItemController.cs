@@ -1,4 +1,5 @@
 using api.Contracts;
+using api.DTOs;
 using api.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -26,9 +27,11 @@ namespace api.Controllers
         {
             IReadOnlyList<TaskItem> taskItems = await _repository.GetAll();
 
+            var taskItemDTOs = taskItems.Select(TaskItemDTO.FromEntity).ToList();
+
             _logger.LogInformation("Retrieved all task items.");
 
-            return Ok(taskItems);
+            return Ok(taskItemDTOs);
         }
 
         /// <summary>
@@ -44,8 +47,10 @@ namespace api.Controllers
                 return NotFound();
             }
 
+            var taskItemDTO = TaskItemDTO.FromEntity(taskItem);
+
             _logger.LogInformation("Retrieved task item with ID {Id}.", id);
-            return Ok(taskItem);
+            return Ok(taskItemDTO);
         }
 
         [HttpPost("")]

@@ -2,6 +2,7 @@ using System;
 using api.Contracts;
 using api.Controllers;
 using api.Models;
+using api.DTOs;
 using api.Tests.Builders;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Update.Internal;
@@ -39,7 +40,7 @@ public class TaskItemControllerTests
 
         #region Assert
         OkObjectResult okResult = Assert.IsType<OkObjectResult>(result.Result);
-        IReadOnlyList<TaskItem> retrievedTaskItems = Assert.IsAssignableFrom<IReadOnlyList<TaskItem>>(okResult.Value);
+        IReadOnlyList<TaskItemDTO> retrievedTaskItems = Assert.IsAssignableFrom<IReadOnlyList<TaskItemDTO>>(okResult.Value);
 
         Assert.Equal(taskItems.Count, retrievedTaskItems.Count);
         #endregion
@@ -60,7 +61,7 @@ public class TaskItemControllerTests
 
         #region Assert
         OkObjectResult okResult = Assert.IsType<OkObjectResult>(result.Result);
-        IReadOnlyList<TaskItem> retrievedTaskItems = Assert.IsAssignableFrom<IReadOnlyList<TaskItem>>(okResult.Value);
+        IReadOnlyList<TaskItemDTO> retrievedTaskItems = Assert.IsAssignableFrom<IReadOnlyList<TaskItemDTO>>(okResult.Value);
 
         Assert.Equal(taskItems.Count, retrievedTaskItems.Count);
         #endregion
@@ -81,7 +82,7 @@ public class TaskItemControllerTests
 
         #region Assert
         OkObjectResult okResult = Assert.IsType<OkObjectResult>(result.Result);
-        TaskItem retrievedTaskItem = Assert.IsAssignableFrom<TaskItem>(okResult.Value);
+        TaskItemDTO retrievedTaskItem = Assert.IsAssignableFrom<TaskItemDTO>(okResult.Value);
 
         Assert.Equal(taskItem.Id, retrievedTaskItem.Id);
         Assert.Equal(taskItem.Title, retrievedTaskItem.Title);
