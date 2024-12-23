@@ -242,7 +242,41 @@ public class TaskItemControllerTests
         #endregion
 
         #region Assert
-        Assert.IsType<NotFoundResult>(result.Result);
+        Assert.IsType<NotFoundObjectResult>(result.Result);
+        #endregion
+    }
+
+    [Fact]
+    public async Task Destroy_ReturnsOkResult_WithValidId() {
+        #region Arrange
+        TaskItem taskItem = new TaskItemBuilder().Build();
+
+        _repository.Setup(r => r.GetOne(taskItem.Id)).ReturnsAsync(taskItem);
+        #endregion
+
+        #region Act
+        ActionResult<TaskItem> result = await _controller.Destroy(taskItem.Id);
+        #endregion
+
+        #region Assert
+        OkObjectResult okResult = Assert.IsType<OkObjectResult>(result.Result);
+        #endregion
+    }
+
+    [Fact]
+    public async Task Destroy_ReturnsNotFound_WithInvalidId() {
+        #region Arrange
+        TaskItem taskItem = new TaskItemBuilder().Build();
+
+        _repository.Setup(r => r.GetOne(taskItem.Id)).ReturnsAsync((TaskItem)null!);
+        #endregion
+
+        #region Act
+        ActionResult<TaskItem> result = await _controller.Destroy(taskItem.Id);
+        #endregion
+
+        #region Assert
+        NotFoundResult notFoundResult = Assert.IsType<NotFoundResult>(result.Result);
         #endregion
     }
 

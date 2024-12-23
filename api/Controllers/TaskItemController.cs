@@ -90,8 +90,13 @@ namespace api.Controllers
             catch (KeyNotFoundException ex)
             {
                 _logger.LogWarning(ex.Message);
-                return NotFound();
+                return NotFound(ex.Message);
             }
+        }
+
+        public async Task<ActionResult<TaskItem>> Destroy(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }
