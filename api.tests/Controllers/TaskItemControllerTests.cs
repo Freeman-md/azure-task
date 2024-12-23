@@ -4,6 +4,7 @@ using api.Controllers;
 using api.Models;
 using api.Tests.Builders;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Update.Internal;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -158,6 +159,57 @@ public class TaskItemControllerTests
         Assert.NotNull(badRequestResult.Value);
 
         Assert.True(_controller.ModelState.ErrorCount > 0);
+        #endregion
+    }
+
+    [Fact]
+    public async Task Update_ReturnsOkResult_WithValidTaskItem() {
+        #region Arrange
+        TaskItem taskItem = new TaskItemBuilder().WithId(1).Build();
+        TaskItem updatedTaskItem = new TaskItemBuilder().WithTitle("Updated Title").Build();
+
+        var updatedTaskItemDict = new Dictionary<string, object>
+        {
+            { "Title", updatedTaskItem.Title },
+            { "Description", updatedTaskItem.Description },
+            { "Status", updatedTaskItem.Status }
+        };
+
+        _repository.Setup(r => r.Update(taskItem.Id, updatedTaskItemDict)).ReturnsAsync(updatedTaskItem);
+        #endregion
+
+        #region Act
+        ActionResult<TaskItem> result = await _controller.Update(taskItem.Id, updatedTaskItemDict);
+        #endregion
+
+        #region Assert
+        OkObjectResult okResult = Assert.IsType<OkObjectResult>(result.Result);
+        TaskItem retrievedTaskItem = Assert.IsAssignableFrom<TaskItem>(okResult.Value);
+
+        Assert.Equal(updatedTaskItem.Id, retrievedTaskItem.Id);
+        Assert.Equal(updatedTaskItem.Title, retrievedTaskItem.Title);
+        #endregion
+    }
+
+    [Fact]
+    public async Task Update_ReturnsNotFound_WithInvalidId() {
+        #region Arrange
+            TaskItem taskItem = new TaskItemBuilder().WithId(1).Build();
+
+            var updatedTaskItemDict = new Dictionary<string, object>
+            {
+                { "Title", "Updated Title" },
+                { "Description", "Updated Description" },
+                { "Status", TaskItemStatus.Done }
+            };
+        #endregion
+
+        #region Act
+            ActionResult<TaskItem> result = await _controller.Update(-1, updatedTaskItemDict);
+        #endregion
+
+        #region Assert
+            Assert.IsType<NotFoundResult>(result.Result);
         #endregion
     }
 

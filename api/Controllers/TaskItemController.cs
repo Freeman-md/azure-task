@@ -61,5 +61,10 @@ namespace api.Controllers
             _logger.LogInformation("Created task item with ID {Id}.", createdTaskItem.Id);
             return CreatedAtAction(nameof(Show), new { id = createdTaskItem.Id }, createdTaskItem);
         }
+
+        public async Task<ActionResult<TaskItem>> Update(int id, Dictionary<string, object> updates)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
