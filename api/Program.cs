@@ -12,16 +12,13 @@ builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var connection = String.Empty;
 if (builder.Environment.IsDevelopment())
 {
     builder.Configuration.AddEnvironmentVariables().AddJsonFile("appsettings.Development.json");
-    connection = builder.Configuration.GetConnectionString("AzureSQL");
+    
 }
-else
-{
-    connection = Environment.GetEnvironmentVariable("AzureSQL");
-}
+
+var connection = builder.Configuration.GetConnectionString("AzureSQL");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connection, sqlServerOptionsAction: sqlOptions =>
 {
