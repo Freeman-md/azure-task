@@ -1,15 +1,18 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace api.Models;
 
-public enum TaskItemStatus {
+public enum TaskItemStatus
+{
     Pending,
     InProgress,
     Completed
 }
 
-public class TaskItem {
+public class TaskItem
+{
 
     public int Id { get; set; }
 
@@ -25,6 +28,8 @@ public class TaskItem {
 
 
     [EnumDataType(typeof(TaskItemStatus), ErrorMessage = "Invalid status value.")]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+
     public TaskItemStatus Status { get; set; } = TaskItemStatus.Pending;
 
     public List<string> Images { get; set; } = new List<string>();
