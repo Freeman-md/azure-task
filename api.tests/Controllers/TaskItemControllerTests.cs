@@ -158,8 +158,8 @@ namespace api.tests.Controllers
         {
             #region Arrange
             var taskItem = new TaskItemBuilder()
-                .WithTitle(title)
-                .WithDescription(description)
+                .WithTitle(title ?? "Valid Title")
+                .WithDescription(description ?? "Valid Description")
                 .WithStatus(status)
                 .Build();
 
