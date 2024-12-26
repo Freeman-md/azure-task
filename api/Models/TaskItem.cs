@@ -17,8 +17,9 @@ public class TaskItem
     public int Id { get; set; }
 
     [Required(ErrorMessage = "Title is required.")]
+    [Base64String(ErrorMessage = "Title must be a base64 string.")]
     [StringLength(100, ErrorMessage = "Title must not exceed 100 characters.")]
-    public required string Title { get; set; }
+    public string Title { get; set; } = string.Empty;
 
     [StringLength(1000, ErrorMessage = "Description must not exceed 1000 characters.")]
     public string? Description { get; set; }
@@ -29,7 +30,6 @@ public class TaskItem
 
     [EnumDataType(typeof(TaskItemStatus), ErrorMessage = "Invalid status value.")]
     [JsonConverter(typeof(JsonStringEnumConverter))]
-
     public TaskItemStatus Status { get; set; } = TaskItemStatus.Pending;
 
     public List<string> Images { get; set; } = new List<string>();
