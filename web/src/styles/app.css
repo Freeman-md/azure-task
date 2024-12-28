@@ -1,0 +1,92 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  @apply bg-gray-100;
+}
+
+@layer components {
+  .btn {
+    @apply inline-block px-4 py-2 rounded-lg font-normal text-center transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer;
+  }
+
+  /* Primary button */
+  .btn-primary {
+    @apply bg-primary text-white hover:bg-primary-700 focus:ring-primary-500;
+  }
+
+  /* Primary button */
+  .btn-primary-outline {
+    @apply bg-primary-100/50 text-primary hover:bg-primary-100 focus:ring-primary-500;
+  }
+
+  /* Muted button */
+  .btn-muted {
+    @apply bg-muted text-white hover:bg-gray-700 focus:ring-gray-500;
+  }
+
+  .btn-gray {
+    @apply bg-gray-300 text-gray-800 font-medium hover:bg-gray-400 focus:ring-gray-500;
+  }
+
+  /* Red button */
+  .btn-red {
+    @apply bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
+  }
+
+  /* Green button */
+  .btn-green {
+    @apply bg-green-600 text-white hover:bg-green-700 focus:ring-green-500;
+  }
+
+  /* Transparent button */
+  .btn-transparent {
+    @apply bg-transparent text-gray-700 hover:bg-gray-100 focus:ring-gray-300;
+  }
+
+  /* Outline button (primary outline) */
+  .btn-outline {
+    @apply border focus:ring-black hover:bg-gray-100;
+  }
+
+  /* Outline primary button */
+  .btn-outline-primary {
+    @apply border border-primary text-primary bg-transparent hover:bg-primary hover:text-white focus:ring-primary;
+  }
+
+  /* Outline muted button */
+  .btn-outline-muted {
+    @apply border border-muted text-muted bg-transparent hover:bg-muted hover:text-white focus:ring-muted;
+  }
+
+  /* Disabled button */
+  .btn-disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+
+  /* Button sizes */
+  .btn-sm {
+    @apply px-3 py-1.5 text-sm;
+  }
+
+  .btn-md {
+    @apply px-4 py-2 text-base;
+  }
+
+  .btn-lg {
+    @apply px-5 py-3 text-lg;
+  }
+
+  .form-checkbox {
+    @apply appearance-none w-5 h-5 border border-gray-300 rounded-full checked:bg-primary checked:border-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary
+  }
+
+}
