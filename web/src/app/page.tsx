@@ -2,7 +2,7 @@ import Menu from "@/features/home/Menu";
 import TaskItem from "@/features/home/TaskItem";
 
 export default async function Home() {
-  const data = await fetch("https://azuretaskapi.azurewebsites.net/api/task-items");
+  const data = await fetch("https://azuretaskapi.azurewebsites.net/api/task-items", { cache: 'force-cache' });
   const response : ApiResponse<Task> = await data.json();
 
   const tasks: Task[] = response.payload;
