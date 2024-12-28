@@ -6,13 +6,6 @@
   box-sizing: border-box;
 }
 
-body {
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  @apply bg-gray-100;
-}
-
 @layer components {
   .btn {
     @apply inline-block px-4 py-2 rounded-lg font-normal text-center transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer;

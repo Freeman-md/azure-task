@@ -1,15 +1,12 @@
 import type { Metadata } from "next";
-import { Fira_Sans, Fira_Mono } from "next/font/google";
+import { Fira_Sans } from "next/font/google";
 import "@/styles/app.css"
 import Header from "@/components/layout/Header";
 
 const firaSans = Fira_Sans({
-  weight: ["400", "500", "600", "700"],
-  subsets: ["latin"],
-});
-
-const firaMono = Fira_Mono({
-  weight: ["400", "500", "700"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+  style: "normal",
   subsets: ["latin"],
 });
 
@@ -29,10 +26,12 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" />
       </head>
       <body
-        className={`${firaSans.className} ${firaMono.className} antialiased`}
+        className={`${firaSans.className} antialiased`}
       >
         <Header />
+        <main className="container mt-32">
         {children}
+        </main>
       </body>
     </html>
   );
