@@ -1,33 +1,11 @@
 import Menu from "@/features/home/Menu";
 import TaskItem from "@/features/home/TaskItem";
 
-export default function Home() {
-  const tasks: Task[] = [
-    {
-      id: "1",
-      title: "Create a new project",
-      description: "Create a new project using the Azure CLI",
-      status: "pending",
-    },
-    {
-      id: "2",
-      title: "Deploy a new project",
-      description: "Deploy a new project using the Azure CLI",
-      status: "in progress",
-    },
-    {
-      id: "3",
-      title: "Create a new project",
-      description: "Create a new project using the Azure CLI",
-      status: "completed",
-    },
-    {
-      id: "4",
-      title: "Deploy a new project",
-      description: "Deploy a new project using the Azure CLI",
-      status: "completed",
-    },
-  ];
+export default async function Home() {
+  const data = await fetch("https://azuretaskapi.azurewebsites.net/api/task-items");
+  const response : ApiResponse<Task> = await data.json();
+
+  const tasks: Task[] = response.payload;
 
   const boards: Record<string, Task[]> = tasks.reduce(
     (acc: Record<string, Task[]>, task: Task) => {

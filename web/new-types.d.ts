@@ -6,3 +6,10 @@ type Task = {
     description: string;
     status: Status;
 }
+
+type ApiResponse<T> = {
+    success: boolean;
+    statusCode: number;
+    payload: Array<T>,
+    error: object
+}
