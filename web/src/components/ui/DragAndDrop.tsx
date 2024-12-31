@@ -58,6 +58,7 @@ export default function DragAndDrop({
           hidden
           multiple
           onChange={handleFilesUpload}
+          accept="image/*, .pdf, .doc, .docx, .txt"
         />
       </div>
     </div>
