@@ -7,6 +7,14 @@
 }
 
 @layer components {
+  .task-card {
+    @apply bg-white p-6 rounded-lg shadow-sm border
+  }
+
+  .transparent-input {
+    @apply border-none w-full bg-transparent outline-none
+  }
+
   .btn {
     @apply inline-block px-4 py-2 rounded-lg font-normal text-center transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer;
   }

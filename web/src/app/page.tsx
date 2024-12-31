@@ -1,3 +1,4 @@
+import CreateTask from "@/features/home/CreateTask";
 import Menu from "@/features/home/Menu";
 import TaskItem from "@/features/home/TaskItem";
 
@@ -39,6 +40,8 @@ export default async function Home() {
                 <TaskItem key={task.id} title={task.title} description={task.description} />
               ))}
               </div>
+
+              <CreateTask />
             </div>
           ))}
         </div>

@@ -8,7 +8,7 @@ export default function Menu() {
         <input
           type="text"
           placeholder="Search tasks"
-          className="border-none w-full bg-transparent outline-none"
+          className="transparent-input"
         />
       </div>
 
