@@ -6,8 +6,23 @@ using api.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+var  MyAllowedSpecificOrigins = "_myAllowedSpecificOrigins";
+
+
+var connection = builder.Configuration.GetConnectionString("AzureSQL");
 
 builder.Services.AddControllers().AddNewtonsoftJson();
+
+builder.Services.AddCors(options => {
+    options.AddPolicy(
+        name: MyAllowedSpecificOrigins,
+        policy => {
+            policy.WithOrigins([
+                "http://localhost:3000"
+            ]);
+        }
+    );
+});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -17,8 +32,6 @@ if (builder.Environment.IsDevelopment())
     builder.Configuration.AddEnvironmentVariables().AddJsonFile("appsettings.Development.json");
     
 }
-
-var connection = builder.Configuration.GetConnectionString("AzureSQL");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connection, sqlServerOptionsAction: sqlOptions =>
 {
@@ -52,6 +65,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors(MyAllowedSpecificOrigins);
 
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
