@@ -13,15 +13,17 @@ var connection = builder.Configuration.GetConnectionString("AzureSQL");
 
 builder.Services.AddControllers().AddNewtonsoftJson();
 
-builder.Services.AddCors(options => {
+builder.Services.AddCors(options =>
+{
     options.AddPolicy(
         name: MyAllowedSpecificOrigins,
-        policy => {
-            policy.WithOrigins([
-                "http://localhost:3000"
-            ]);
-        }
-    );
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000")
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .AllowCredentials();
+        });
 });
 
 builder.Services.AddEndpointsApiExplorer();
