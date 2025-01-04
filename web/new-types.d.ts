@@ -1,4 +1,8 @@
-type Status = "pending" | "in progress" | "completed";
+enum Status {
+    Pending = "pending",
+    InProgress = "in progress",
+    Completed = "completed",
+  }
 
 type Task = {
     id: string;

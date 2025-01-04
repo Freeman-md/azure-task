@@ -1,5 +1,6 @@
 "use client";
 
+import createTask from "@/actions/tasks/create-task";
 import DragAndDrop from "@/components/ui/DragAndDrop";
 import { useFileManager } from "@/hooks/useFileManager";
 import { IconPlus, IconX } from "@tabler/icons-react";
@@ -11,23 +12,40 @@ export default function CreateTask() {
 
   const showTaskForm = () => setIsFormVisible(() => !isFormVisible);
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLFormElement>) => {
+    if (event.key === "Enter" && event.target instanceof HTMLInputElement) {
+      console.log("Form submitted via Enter key");
+    }
+  };
+
+  ;
+
   return (
     <section role="create-task" className="space-y-4">
       {isFormVisible && (
-        <form className="task-card space-y-2">
+        <form
+          className="task-card space-y-2"
+          action={createTask}
+          onKeyDown={handleKeyDown}
+        >
           <input
             type="text"
             className="block transparent-input text-xl"
             placeholder="Title"
+            name="title"
           />
 
           <textarea
             className="block transparent-input text-base resize-none"
             placeholder="Description"
             rows={2}
+            name="description"
           />
 
-          <section role="drag-and-drop" className="border border-dashed border-gray-300 p-4 rounded-md space-y-2">
+          <section
+            role="drag-and-drop"
+            className="border border-dashed border-gray-300 p-4 rounded-md space-y-2"
+          >
             <DragAndDrop onFilesAdd={addFiles} />
 
             {files.length > 0 &&
@@ -49,6 +67,10 @@ export default function CreateTask() {
                 );
               })}
           </section>
+
+          <button className="btn btn-outline" type="submit">
+            Create
+          </button>
         </form>
       )}
 
